@@ -85,34 +85,39 @@ void Checker::UpdateMoves()
 	JumpTarget jumpUpRight		= CheckIfCanJumpUpRight();
 	JumpTarget jumpDownRight	= CheckIfCanJumpDownRight();
 	JumpTarget jumpUpLeft		= CheckIfCanJumpUpLeft();
-	JumpTarget jumpDownLeft		= CheckIfCanJumpDownLeft();
+	JumpTarget jumpDownLeft		= CheckIfCanJumpDownLeft(); 
+
+	m_vrTilesCanJumpTo.clear();
 
 	if (jumpUpRight.jumpTile != -1)
 	{
 		m_vrTilesCanJumpTo.push_back(jumpUpRight);
-		printf("Can move jump %i and land on %i\n", jumpUpRight.targetTile, jumpUpRight.jumpTile);
+		printf("Piece at %i can jump %i and land on %i\n", m_iCurrentTile, jumpUpRight.targetTile, jumpUpRight.jumpTile);
 	}
 
 
 	if (jumpDownRight.jumpTile != -1)
 	{
 		m_vrTilesCanJumpTo.push_back(jumpDownRight);
-		printf("Can move jump %i and land on %i\n", jumpDownRight.targetTile, jumpDownRight.jumpTile);
+		printf("Piece at %i can jump %i and land on %i\n", m_iCurrentTile, jumpDownRight.targetTile, jumpDownRight.jumpTile);
 	}
 
 
 	if (jumpUpLeft.jumpTile != -1)
 	{
 		m_vrTilesCanJumpTo.push_back(jumpUpLeft);
-		printf("Can move jump %i and land on %i\n", jumpUpLeft.targetTile, jumpUpLeft.jumpTile);
+		printf("Piece at %i can jump %i and land on %i\n", m_iCurrentTile, jumpUpLeft.targetTile, jumpUpLeft.jumpTile);
 	}
 
 
 	if (jumpDownLeft.jumpTile != -1)
 	{
 		m_vrTilesCanJumpTo.push_back(jumpDownLeft);
-		printf("Can move jump %i and land on %i\n", jumpDownLeft.targetTile, jumpDownLeft.jumpTile);
+		printf("Piece at %i can jump %i and land on %i\n", m_iCurrentTile, jumpDownLeft.targetTile, jumpDownLeft.jumpTile);
 	}
+
+
+	printf("\n");
 
 
 }
@@ -131,6 +136,8 @@ bool Checker::TryMoveToTarget(int targetTile)
 		}
 	}
 
+	printf("Can't move there\n");
+
 	return false;
 }
 
@@ -147,6 +154,8 @@ bool Checker::TryJumpToTarget(int targetTile)
 			return true;
 		}
 	}
+
+	printf("Can't jump there\n");
 
 	return false;
 }
@@ -325,7 +334,7 @@ JumpTarget Checker::CheckIfCanJumpUpLeft()
 			// If checker is black and target is white or if checker is white and target is black
 			if ((!m_bIsWhite && m_vrTileList[iTargetTile].m_eCurrentState == Tile::WHITE) || (m_bIsWhite && m_vrTileList[iTargetTile].m_eCurrentState == Tile::BLACK))
 			{
-				if (iTargetTile != 7 && iTargetTile != 23 && iTargetTile != 39 && iTargetTile < 55)
+				if (iTargetTile != 8 && iTargetTile != 24 && iTargetTile != 40 && iTargetTile < 56)
 				{
 					if (m_vrTileList[iJumpTile].m_eCurrentState == Tile::EMPTY)
 					{
@@ -345,14 +354,16 @@ JumpTarget Checker::CheckIfCanJumpDownLeft()
 	int iTargetTile = m_iCurrentTile - 9;
 	int iJumpTile = iTargetTile - 9;
 
+	// Checks whether it is actually allowed to make the move
 	if (!m_bIsWhite || m_bIsKing)
 	{
+		// Eliminates left side and bottom
 		if (m_iCurrentTile != 24 && m_iCurrentTile != 40 && m_iCurrentTile != 56 && m_iCurrentTile > 8)
 		{
 			// If checker is black and target is white or if checker is white and target is black
 			if ((!m_bIsWhite && m_vrTileList[iTargetTile].m_eCurrentState == Tile::WHITE) || (m_bIsWhite && m_vrTileList[iTargetTile].m_eCurrentState == Tile::BLACK))
 			{
-				if (iTargetTile != 23 && iTargetTile != 39 && iTargetTile != 55 && iTargetTile > 7)
+				if (iTargetTile != 24 && iTargetTile != 40 && iTargetTile != 56 && iTargetTile > 8)
 				{
 					if (m_vrTileList[iJumpTile].m_eCurrentState == Tile::EMPTY)
 					{

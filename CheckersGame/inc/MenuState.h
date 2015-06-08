@@ -46,7 +46,11 @@ public:
 protected:
 
 	std::vector<Tile> m_vrBoardTiles;
-	std::vector<Checker> m_vrCheckerPieces;
+	std::vector<Checker> m_vrWhitePieces;
+	std::vector<Checker> m_vrBlackPieces;
+	std::vector<int> m_vrWhitePiecesThatCanJump;
+	std::vector<int> m_vrBlackPiecesThatCanJump;
+
 
 private:
 
