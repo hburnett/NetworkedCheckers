@@ -46,6 +46,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)\bin</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -53,15 +54,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)libraries\irrKlang\include;$(SolutionDir)MathsLibrary\inc;$(SolutionDir)libraries\glew\include\GL;$(ProjectDir)\inc\;$(SolutionDir)libraries\glfw_lib\include\glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libraries\irrKlang\include;$(SolutionDir)MathsLibrary\inc;$(SolutionDir)libraries\glew\include\GL;$(ProjectDir)\inc\;$(SolutionDir)libraries\glfw_lib\include\glfw;$(SolutionDir)libraries\Raknet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)libraries\irrKlang\lib\Win32-visualStudio;$(SolutionDir)MathsLibrary\bin;$(SolutionDir)libraries\glew\lib\release\Win32\;$(SolutionDir)libraries\;$(SolutionDir)libraries\glfw_lib\lib-msvc110\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;glew32s.lib;MathsLibrary_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;Raknet_d.lib;glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;glew32s.lib;MathsLibrary_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)MathsLibrary\bin;$(SolutionDir)libraries\glfw_lib\lib-msvc110\;$(SolutionDir)libraries\raknet\lib;$(SolutionDir)libraries\glew\lib\release\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,14 +73,17 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)libraries\Raknet\include;$(ProjectDir)inc;$(SolutionDir)libraries\glfw_lib\include\GLFW;$(SolutionDir)libraries\glew\include\GL;$(SolutionDir)MathsLibrary\inc;$(SolutionDir)libraries\irrKlang\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ws2_32.lib;Raknet.lib;glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;glew32s.lib;MathsLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)libraries\glfw_lib\lib-msvc110\;$(SolutionDir)libraries\Raknet\lib;$(SolutionDir)libraries\glew\lib\release\win32;$(SolutionDir)MathsLibrary\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

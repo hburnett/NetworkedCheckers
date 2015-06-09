@@ -6,10 +6,12 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "WindowsIncludes.h"
 #include "glfw3.h"
 #include "Vec2.h"
 #include "Mat3.h"
 #include <vector>
+#include "RakPeerInterface.h"
 
 
 class Texture;
@@ -19,7 +21,6 @@ class GameStateManager;
 class InputManager;
 class Vec2;
 class Mat3;
-class Node;
 
 
 class Game
@@ -30,7 +31,7 @@ public:
 	friend class IGameState;
 
 	// constructor
-	Game(float windowWidth, float windowHeight, const char *windowTitle, bool fullscreen);
+	Game(float windowWidth, float windowHeight, const char *windowTitle, bool fullscreen, bool isServer, RakNet::RakPeerInterface* pPeerInterface);
 
 	float GetWindowWidth()	{ return m_fWindowWidth;	}
 	float GetWindowHeight()	{ return m_fWindowHeight;	}
@@ -40,7 +41,8 @@ public:
 	// destructor
 	~Game();
 
-
+	
+	RakNet::RakPeerInterface* m_pPeerInterface;
 	
 	void GameOver() { m_bGameOver = true; }
 	
@@ -52,6 +54,8 @@ public:
 
 	// runs the game
 	void RunGame();
+
+	bool m_bIsServer;
 
 
 private:

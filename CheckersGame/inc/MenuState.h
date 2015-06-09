@@ -8,12 +8,17 @@
 #ifndef MENUSTATE_H
 #define	MENUSTATE_H
 
+#include "WindowsIncludes.h"
 #include "GameStateManager.h"
 #include "Vec2.h"
 #include "Camera.h"
 #include <vector>
 #include "Tile.h"
 #include "Checker.h"
+#include "RakPeerInterface.h"
+#include "MessageIdentifiers.h"
+#include "BitStream.h"
+#include "RakNetTypes.h"  // MessageID
 
 
 class GameStateManager;
@@ -23,8 +28,6 @@ class Texture;
 class SpriteBatch;
 class Vec2;
 class Camera;
-class Player;
-class Block;
 class Tile;
 class Checker;
 
@@ -41,7 +44,12 @@ public:
 	virtual void Draw();
 
 	bool m_bWhiteTurn;
-		
+
+	enum GameMessages
+	{
+		ID_SERVER_TEXT_MESSAGE = 134 + 1,
+		ID_OPPONENT_CLICKED_MOUSE = 134 + 2
+	};
 
 protected:
 
@@ -54,6 +62,11 @@ protected:
 
 private:
 
+	void HandleNetworkMessages(RakNet::RakPeerInterface* pPeerInterface);
+	void SendClickedMessage(RakNet::RakPeerInterface* pPeerInterface);
+
+	bool m_bPlayerIsWhite;
+	bool m_bOpponentClicked;
 
 	Texture			*m_pBackgroundTexture;
 	StaticSprite	*m_pBackgroundSprite;
@@ -63,8 +76,8 @@ private:
 	Camera	m_gameCamera;
 
 	Vec2	m_v2cameraLastPosition;
+	Vec2	m_v2OpponentMousePos;
 
-	std::vector<Block*> m_vecLevel;
 
 };
 

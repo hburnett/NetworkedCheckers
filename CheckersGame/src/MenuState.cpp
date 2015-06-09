@@ -1,4 +1,5 @@
 #include "MenuState.h"
+#include "WindowsIncludes.h"
 #include "Game.h"
 #include "StaticSprite.h"
 #include "Texture.h"
@@ -8,15 +9,19 @@
 #include "Camera.h"
 #include "InputManager.h"
 #include "Globals.h"
-#include "Player.h"
 #include <random>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdio.h>
+#include <string.h>
 
 MenuState::MenuState(GameStateManager *pGameStateManager, Game *pGame) : IGameState(pGameStateManager, pGame)
 {
 	m_pGame					= pGame;
+
+	m_bPlayerIsWhite		= m_pGame->m_bIsServer;
+	m_bOpponentClicked		= false;
 
 	m_gameCamera			= Camera();
 	m_v2cameraLastPosition  = m_gameCamera.cameraMatrix.GetTranslation();
@@ -54,6 +59,7 @@ MenuState::MenuState(GameStateManager *pGameStateManager, Game *pGame) : IGameSt
 		}			
 	}
 
+	#pragma region CREATE CHECKER PIECES 
 
 	// Create the white pieces
 	int currentTile = 1;
@@ -104,25 +110,42 @@ MenuState::MenuState(GameStateManager *pGameStateManager, Game *pGame) : IGameSt
 		}
 	}
 
+	#pragma endregion
 	
 }
 
 MenuState::~MenuState()
 {	
-	for( auto iter = 0; iter != m_vecLevel.size(); iter++)
-	{
-		delete m_vecLevel[iter];
-	}
-
 	delete m_pBackgroundTexture;
 	delete m_pBackgroundSprite; 
 }
 
 void MenuState::Update(float dt)
 {
-	if (g_inputManager.GetMouseClicked(0))
+	// Receive packets
+	HandleNetworkMessages(m_pGame->m_pPeerInterface);
+
+
+
+	// 
+	if (g_inputManager.GetMouseClicked(0) || m_bOpponentClicked)
 	{
-		Vec2 mousePos = g_inputManager.GetMouseLocation();		
+		Vec2 mousePos;
+
+		 if (!m_bOpponentClicked)
+		 {
+			mousePos = g_inputManager.GetMouseLocation();		
+			// Send mousePos;
+			// Send m_bOpponnentClicked = true;0
+			SendClickedMessage(m_pGame->m_pPeerInterface);
+		 }
+
+		 else 
+		 {
+			mousePos = m_v2OpponentMousePos;
+		 }
+
+		// Old checkers
 
 		//for (int i = 0; i < m_vrCheckerPieces.size(); i++)
 		//{
@@ -219,7 +242,10 @@ void MenuState::Update(float dt)
 
 		#pragma region WHITE TURN
 
-		if (m_bWhiteTurn)
+		// Will check whether the current player clicked and that they are white
+		// Or if the opponent clicked and the opponent is white/player is black
+
+		if ((m_bWhiteTurn && m_bPlayerIsWhite && !m_bOpponentClicked) || (m_bWhiteTurn && !m_bPlayerIsWhite && m_bOpponentClicked))
 		{
 			bool anyJumps = false;
 			m_vrWhitePiecesThatCanJump.clear();
@@ -505,7 +531,10 @@ void MenuState::Update(float dt)
 
 		#pragma region BLACK TURN
 
-		if (!m_bWhiteTurn)
+		// Will check whether the current player clicked and that they are black
+		// Or if the opponent clicked and the opponent is black/player is white
+
+		if ((!m_bWhiteTurn && !m_bPlayerIsWhite && !m_bOpponentClicked) || (!m_bWhiteTurn && m_bPlayerIsWhite && m_bOpponentClicked))
 		{
 			bool anyJumps = false;
 			m_vrBlackPiecesThatCanJump.clear();
@@ -792,7 +821,7 @@ void MenuState::Update(float dt)
 
 	#pragma endregion
 
-
+		 m_bOpponentClicked = false;
 	}
 
 
@@ -823,4 +852,62 @@ void MenuState::Draw()
 	}
 		
 	m_pSpriteBatch->End();
+}
+
+
+void MenuState::SendClickedMessage(RakNet::RakPeerInterface* pPeerInterface)
+{
+	Vec2 mousePos = g_inputManager.GetMouseLocation();
+	
+	RakNet::BitStream bs;
+	bs.Write((RakNet::MessageID)MenuState::GameMessages::ID_OPPONENT_CLICKED_MOUSE);
+	bs.Write(mousePos.x);
+	bs.Write(mousePos.y);
+	pPeerInterface->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
+
+}
+
+void MenuState::HandleNetworkMessages(RakNet::RakPeerInterface* pPeerInterface)
+{
+
+	RakNet::Packet* packet = nullptr;
+
+	for (packet = pPeerInterface->Receive(); packet; pPeerInterface->DeallocatePacket(packet), packet = pPeerInterface->Receive())
+	{
+		switch (packet->data[0])
+		{
+		case ID_NEW_INCOMING_CONNECTION:
+			std::cout << "A connection is incoming.\n";
+			break;
+
+		case ID_DISCONNECTION_NOTIFICATION:
+			std::cout << "A client has disconnected.\n";
+			break;
+
+		case ID_CONNECTION_LOST:
+			std::cout << "A client lost the connection.\n";
+			break;
+
+			case ID_OPPONENT_CLICKED_MOUSE:
+			{
+				float x;
+				float y;
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+				bsIn.Read(x);
+				bsIn.Read(y);
+				printf("\nMouse X: %f\n Mouse Y: %f", x, y);
+				m_v2OpponentMousePos.x = x;
+				m_v2OpponentMousePos.y = y;
+				m_bOpponentClicked = true;
+				//std::cout << str.C_String() << std::endl;
+				break;
+			}
+
+		default:
+			std::cout << "Received a message with a unknown id: " <<
+				packet->data[0];
+			break;
+		}
+	}
 }

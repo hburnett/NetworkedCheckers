@@ -1,3 +1,4 @@
+#include "WindowsIncludes.h"
 #include <Windows.h>
 #include "Game.h"
 #include "SpriteBatch.h"
@@ -8,10 +9,15 @@
 #include "Globals.h"
 #include "InputManager.h"
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 
-Game::Game(float windowWidth, float windowHeight, const char *windowTitle, bool fullscreen)
+Game::Game(float windowWidth, float windowHeight, const char *windowTitle, bool fullscreen, bool isServer, RakNet::RakPeerInterface* pPeerInterface)
 {
 	CreateNewWindow(windowWidth, windowHeight, windowTitle, fullscreen);
+
+	m_pPeerInterface = pPeerInterface;
+	m_bIsServer = isServer;
 
 	m_fWindowWidth	= windowWidth;
 	m_fWindowHeight = windowHeight;
@@ -152,90 +158,6 @@ void Game::Update()
 
 void Game::Draw()
 {
-	/*
-	// Please Note:
-	// most of the gl Functions within this draw method are imidiate mode rendering functions
-	// which are all depreciated as of OpenGL 3.0 and above.
-	// however, they are very convenient for learning the basics of openGL.
-
-
-	// pre declaring some variables for use later on in this function
-	float xPos, yPos, width, height;
-
-	static float xTexCoordOffset = 0.0f;
-	xTexCoordOffset += m_deltaTime * 0.5f;
-
-
-	// Rendering first quad to the screen
-	//----------------------------------------------------------------------------
-		xPos		= 50;
-		yPos		= 50;
-		width		= 150;
-		height		= 150;
-
-		// bind the texture that we wish to use for rendering
-		glBindTexture( GL_TEXTURE_2D, m_pTexture->GetTextureHandle() );
-
-		glBegin(GL_QUADS);
-
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);		glTexCoord2f(0.0f, 0.0f);	glVertex2f(xPos,			yPos);
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);		glTexCoord2f(1.0f, 0.0f);	glVertex2f(xPos + width,	yPos);
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);		glTexCoord2f(1.0f, 1.0f);	glVertex2f(xPos + width,	yPos + height);
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);		glTexCoord2f(0.0f, 1.0f);	glVertex2f(xPos,			yPos + height);
-
-		glEnd();
-	//----------------------------------------------------------------------------
-
-	// render a second quad to the screen
-	// this time the texture coordinates are modified a bit
-	// note what texture paramaters are used by defailt...
-	// 
-	// TODO: Change the Texture Paramaters from GL_REPEAT
-	// to one of these:  GL_CLAMP, GL_REPEAT
-	//-----------------------------------------------------------------
-		xPos		= 250;
-		yPos		= 50;
-		width		= m_pTexture->GetWidth();
-		height		= m_pTexture->GetHeight();
-
-		glBindTexture( GL_TEXTURE_2D, m_pTexture->GetTextureHandle() );
-
-		// note that we set these paramaters to a default value (GL_REPEAT) in the Load Texture function
-		// these paramaters modify the texture properties of the currently bound texture.
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		// also notice, i only have to change the color once...
-		// and it will apply to all vertices until the color is changed again...
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-		glBegin(GL_QUADS);
-
-			glTexCoord2f(0.0f + xTexCoordOffset, 0.0f);	glVertex2f(xPos,			yPos);
-			glTexCoord2f(1.0f + xTexCoordOffset, 0.0f);	glVertex2f(xPos + width,	yPos);
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);	glTexCoord2f(1.0f + xTexCoordOffset, 1.0f);	glVertex2f(xPos + width,	yPos + height);
-			glTexCoord2f(0.0f + xTexCoordOffset, 1.0f);	glVertex2f(xPos,			yPos + height);
-
-		glEnd();
-	//-----------------------------------------------------------------
-	
-
-	m_pSpriteBatch->Begin();
-
-	m_pSpriteBatch->SetRenderColour(255.0f, 0.0f, 0.0f, 255.0f);
-
-	m_pSpriteBatch->SetUVCoordinates(1.0f, 0.5f);
-	SetUVCoordinates(Vec2(0.5f, 0), Vec2(1, 0), Vec2(1, 0.5f), Vec2(0.5f, 0.5f));
-	
-	DrawSprite( m_pCrate, Vec2(m_fWindowWidth/2, m_fWindowHeight/2) );
-
-	m_pSpriteBatch->SetUVCoordinates(Vec2(m_ufMoveUVLeft,0), Vec2(m_ufMoveUVRight,0), Vec2(m_ufMoveUVRight,1), Vec2(m_ufMoveUVLeft, 1));
-	
-	DrawSprite( m_pCrate, Vec2(m_iMoveSpriteX,m_iMoveSpriteY), Vec2(100, 100) );
-	m_pSpriteBatch->DrawSprite( m_pCrate, Vec2(400,200) );	
-
-	m_pSpriteBatch->End();*/
-
 	m_pGameStateManager->DrawGameStates();
 }
 

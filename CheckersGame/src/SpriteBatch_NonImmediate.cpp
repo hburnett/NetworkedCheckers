@@ -137,11 +137,11 @@ void SpriteBatch_NonImmediate::DrawSprite( Texture *pTexture, const Mat3 &transf
 }
 
 
-void SpriteBatch_NonImmediate::BuildOrthoProjectionMatrix( float *pMat4x4, float left, float right, float bottom, float top, float near, float far) const
+void SpriteBatch_NonImmediate::BuildOrthoProjectionMatrix( float *pMat4x4, float left, float right, float bottom, float top, float nearF, float farF) const
 {
 	float w = right - left;
 	float h = top - bottom;
-	float d = far - near;
+	float d = farF - nearF;
 
 	pMat4x4[0]	=  2.0f / w;
 	pMat4x4[1]	=  0.0f;
@@ -157,7 +157,7 @@ void SpriteBatch_NonImmediate::BuildOrthoProjectionMatrix( float *pMat4x4, float
 	pMat4x4[11] =  0.0f;
 	pMat4x4[12] = -1.0f * ( (right + left) / w );
 	pMat4x4[13] = -1.0f * ( (top + bottom) / h );
-	pMat4x4[14] = -1.0f * ( (far + near)   / d );
+	pMat4x4[14] = -1.0f * ( (farF + nearF)   / d );
 	pMat4x4[15] =  1.0f;
 }
 
