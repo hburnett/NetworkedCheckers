@@ -19,6 +19,7 @@
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
 #include "RakNetTypes.h"  // MessageID
+#include "irrKlang.h"
 
 
 class GameStateManager;
@@ -67,6 +68,7 @@ private:
 
 	bool m_bPlayerIsWhite;
 	bool m_bOpponentClicked;
+	bool m_bGameOver;
 
 	Texture			*m_pBackgroundTexture;
 	StaticSprite	*m_pBackgroundSprite;
@@ -78,7 +80,11 @@ private:
 	Vec2	m_v2cameraLastPosition;
 	Vec2	m_v2OpponentMousePos;
 
+	irrklang::ISoundEngine* m_seSoundEngine;
 
+	Texture		 *m_texWinner;
+
+	StaticSprite *m_sprWinner;
 };
 
 #endif

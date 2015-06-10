@@ -22,6 +22,7 @@ MenuState::MenuState(GameStateManager *pGameStateManager, Game *pGame) : IGameSt
 
 	m_bPlayerIsWhite		= m_pGame->m_bIsServer;
 	m_bOpponentClicked		= false;
+	m_bGameOver				= false;
 
 	m_gameCamera			= Camera();
 	m_v2cameraLastPosition  = m_gameCamera.cameraMatrix.GetTranslation();
@@ -36,6 +37,12 @@ MenuState::MenuState(GameStateManager *pGameStateManager, Game *pGame) : IGameSt
 	m_pBackgroundSprite->Transform().SetTranslation( border / 2 );
 
 	m_bWhiteTurn = true;
+
+	//// start the sound engine with default parameters
+	m_seSoundEngine = irrklang::createIrrKlangDevice();
+	
+	if (!m_seSoundEngine)
+		printf("Error starting up the engine");
 	
 	float height = m_pGame->GetWindowHeight();
 	float width = m_pGame->GetWindowWidth();
@@ -125,7 +132,26 @@ void MenuState::Update(float dt)
 	// Receive packets
 	HandleNetworkMessages(m_pGame->m_pPeerInterface);
 
+	if (!m_bGameOver && m_vrWhitePieces.size() < 1)
+	{
+		m_texWinner = new Texture("./Images/blackWins.png");
+		
+		m_sprWinner = new StaticSprite(m_texWinner, Vec2(512, 128));
+		m_sprWinner->Transform().SetTranslation(Vec2(m_pGame->GetWindowWidth() / 2, m_pGame->GetWindowHeight() / 2));
+		
+		m_bGameOver = true; 
+	}
 
+
+	if (!m_bGameOver && m_vrBlackPieces.size() < 1)
+	{
+		m_texWinner = new Texture("./Images/whiteWins.png");
+
+		m_sprWinner = new StaticSprite(m_texWinner, Vec2(512, 128));
+		m_sprWinner->Transform().SetTranslation(Vec2(m_pGame->GetWindowWidth() / 2, m_pGame->GetWindowHeight() / 2));
+
+		m_bGameOver = true;
+	}
 
 	// 
 	if (g_inputManager.GetMouseClicked(0) || m_bOpponentClicked)
@@ -309,6 +335,7 @@ void MenuState::Update(float dt)
 									if (jumpTilePair.jumpTile == m_vrBoardTiles[tileSelected].m_iTileNumber)
 									{
 										printf("Jump Success\n");
+										m_seSoundEngine->play2D("./sounds/moveChecker.wav", false);
 
 										// Sets the selected pieces tile and 
 										// The enemy being jumped overs tile to empty. 
@@ -352,7 +379,20 @@ void MenuState::Update(float dt)
 									}
 
 									else
+									{
 										m_bWhiteTurn = !m_bWhiteTurn;
+
+										for (int k = 0; k < m_vrWhitePieces.size(); k++)
+										{
+											m_vrWhitePieces[k].m_bIsCurrentTurn = false;
+										}
+
+										for (int k = 0; k < m_vrBlackPieces.size(); k++)
+										{
+											m_vrBlackPieces[k].m_bIsCurrentTurn = true;
+										}
+
+									}
 								}
 							}
 						}
@@ -434,10 +474,22 @@ void MenuState::Update(float dt)
 							if (m_vrWhitePieces[pieceSelected].TryMoveToTarget(m_vrBoardTiles[tileSelected].m_iTileNumber))
 							{
 								printf("Move Success\n");
+								m_seSoundEngine->play2D("./sounds/moveChecker.wav", false);
 
 								// Sets the selected pieces tile to empty.
 								// Then sets the selected pieces new tile to White.
 								m_bWhiteTurn = !m_bWhiteTurn;
+
+								for (int k = 0; k < m_vrWhitePieces.size(); k++)
+								{
+									m_vrWhitePieces[k].m_bIsCurrentTurn = false;
+								}
+
+								for (int k = 0; k < m_vrBlackPieces.size(); k++)
+								{
+									m_vrBlackPieces[k].m_bIsCurrentTurn = true;
+								}
+
 								m_vrBoardTiles[m_vrWhitePieces[pieceSelected].m_iCurrentTile].m_eCurrentState = Tile::EMPTY;														
 								m_vrBoardTiles[tileSelected].m_eCurrentState = Tile::WHITE;
 								
@@ -460,6 +512,7 @@ void MenuState::Update(float dt)
 									if (jumpTilePair.jumpTile == m_vrBoardTiles[tileSelected].m_iTileNumber)
 									{
 										printf("Jump Success\n");
+										m_seSoundEngine->play2D("./sounds/moveChecker.wav", false);
 
 										// Sets the selected pieces tile and 
 										// The enemy being jumped overs tile to empty. 
@@ -483,6 +536,17 @@ void MenuState::Update(float dt)
 											{
 												m_vrBlackPieces.erase(m_vrBlackPieces.begin() + j);
 												m_bWhiteTurn = !m_bWhiteTurn;
+
+												for (int k = 0; k < m_vrWhitePieces.size(); k++)
+												{
+													m_vrWhitePieces[k].m_bIsCurrentTurn = false;
+												}
+
+												for (int k = 0; k < m_vrBlackPieces.size(); k++)
+												{
+													m_vrBlackPieces[k].m_bIsCurrentTurn = true;
+												}
+
 												break;
 											}
 										}
@@ -622,6 +686,7 @@ void MenuState::Update(float dt)
 											{
 												m_vrWhitePieces.erase(m_vrWhitePieces.begin() + j);
 												printf("Jump Success\n");
+												m_seSoundEngine->play2D("./sounds/moveChecker.wav", false);
 												killedEnemy = true;
 												break;
 											}
@@ -645,7 +710,21 @@ void MenuState::Update(float dt)
 
 									// If the piece can't jump again, the turn is over.
 									else
+									{
 										m_bWhiteTurn = !m_bWhiteTurn;
+
+
+										for (int k = 0; k < m_vrWhitePieces.size(); k++)
+										{
+											m_vrWhitePieces[k].m_bIsCurrentTurn = true;
+										}
+
+										for (int k = 0; k < m_vrBlackPieces.size(); k++)
+										{
+											m_vrBlackPieces[k].m_bIsCurrentTurn = false;
+										}
+
+									}
 								}
 							}
 						}
@@ -728,10 +807,22 @@ void MenuState::Update(float dt)
 							if (m_vrBlackPieces[pieceSelected].TryMoveToTarget(m_vrBoardTiles[tileSelected].m_iTileNumber))
 							{
 								printf("Move Success\n");
+								m_seSoundEngine->play2D("./sounds/moveChecker.wav", false);
 
 								// Sets the selected pieces tile to empty.
-								// Then sets the selected pieces new tile to White.
 								m_bWhiteTurn = !m_bWhiteTurn;
+
+
+								for (int k = 0; k < m_vrWhitePieces.size(); k++)
+								{
+									m_vrWhitePieces[k].m_bIsCurrentTurn = true;
+								}
+
+								for (int k = 0; k < m_vrBlackPieces.size(); k++)
+								{
+									m_vrBlackPieces[k].m_bIsCurrentTurn = false;
+								}
+
 								m_vrBoardTiles[m_vrBlackPieces[pieceSelected].m_iCurrentTile].m_eCurrentState = Tile::EMPTY;
 								m_vrBoardTiles[tileSelected].m_eCurrentState = Tile::BLACK;
 
@@ -776,7 +867,19 @@ void MenuState::Update(float dt)
 											{
 												m_vrWhitePieces.erase(m_vrWhitePieces.begin() + j);
 												m_bWhiteTurn = !m_bWhiteTurn;
+
+												for (int k = 0; k < m_vrWhitePieces.size(); k++)
+												{
+													m_vrWhitePieces[k].m_bIsCurrentTurn = true;
+												}
+
+												for (int k = 0; k < m_vrBlackPieces.size(); k++)
+												{
+													m_vrBlackPieces[k].m_bIsCurrentTurn = false;
+												}
+
 												printf("Jump Success\n");
+												m_seSoundEngine->play2D("./sounds/moveChecker.wav", false);
 												break;
 											}
 										}
@@ -849,6 +952,11 @@ void MenuState::Draw()
 	for each (Checker gamePiece in m_vrBlackPieces)
 	{
 		gamePiece.Draw(m_pSpriteBatch);
+	}
+
+	if (m_bGameOver)
+	{
+		m_sprWinner->Draw(m_pSpriteBatch);
 	}
 		
 	m_pSpriteBatch->End();

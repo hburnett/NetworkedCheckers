@@ -14,26 +14,39 @@ Checker::Checker(float x, float y, float w, float h, int currentTile, bool white
 	m_iCurrentTile = currentTile;
 	m_bIsSelected = false;
 	m_bIsKing = false;
+	m_bIsCurrentTurn = white;
+
+	m_texSelector = new Texture("./Images/whiteSelector.png");
 
 	if (white)
 	{
-		m_texPiece = new Texture("./Images/whitePiece.png");
+		m_texPiece = new Texture("./Images/whitePawn.png");
 	}
 
 	else
 	{
-		m_texPiece = new Texture("./Images/blackPiece.png");
+		m_texPiece = new Texture("./Images/blackPawn.png");
 	}
 
 
 	m_sprPiece = new StaticSprite(m_texPiece, Vec2(w, h));
 	m_sprPiece->Transform().SetTranslation(Vec2(x, y));
 
+	m_sprSelector = new StaticSprite(m_texSelector, Vec2(w, h));
+	m_sprSelector->Transform().SetTranslation(Vec2(x, y));
+
 	m_rRectangle = RectangleHitbox(x, y, w, h);
 }
 
 Checker::~Checker()
 {
+	//delete m_sprPiece;
+	//delete m_sprSelector;
+	//
+	//delete m_texPiece;
+	//delete m_texSelector;
+
+	
 }
 
 void Checker::Update(float dt)
@@ -44,6 +57,22 @@ void Checker::Draw(SpriteBatch *sb)
 {
 	m_sprPiece->Transform().SetTranslation(m_v2Position);
 	m_sprPiece->Draw(sb);
+
+	if (m_bIsCurrentTurn)
+		m_sprSelector->SetColour(0, 0, 255, 122);
+
+	else
+	{
+		m_sprSelector->SetColour(0, 0, 0, 0);
+	}
+
+	if (m_bIsSelected)
+	{
+		m_sprSelector->SetColour(255, 0, 0, 200);
+	}
+	
+	m_sprSelector->Transform().SetTranslation(m_v2Position);
+	m_sprSelector->Draw(sb);
 }
 
 void Checker::UpdateMoves()
@@ -169,7 +198,7 @@ void Checker::KingMe()
 			m_bIsKing = true;
 			delete m_texPiece;
 			delete m_sprPiece;
-			m_texPiece = new Texture("./Images/whiteKing.png");
+			m_texPiece = new Texture("./Images/whiteKingPiece.png");
 			m_sprPiece = new StaticSprite(m_texPiece, m_v2Dimensions);
 		}
 	}
@@ -181,7 +210,7 @@ void Checker::KingMe()
 			m_bIsKing = true;
 			delete m_texPiece;
 			delete m_sprPiece;
-			m_texPiece = new Texture("./Images/blackKing.png");
+			m_texPiece = new Texture("./Images/blackKingPiece.png");
 			m_sprPiece = new StaticSprite(m_texPiece, m_v2Dimensions);
 		}
 	}

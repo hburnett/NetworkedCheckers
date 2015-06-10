@@ -61,8 +61,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;Raknet_d.lib;glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;glew32s.lib;MathsLibrary_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)MathsLibrary\bin;$(SolutionDir)libraries\glfw_lib\lib-msvc110\;$(SolutionDir)libraries\raknet\lib;$(SolutionDir)libraries\glew\lib\release\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;Raknet_d.lib;glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;glew32s.lib;MathsLibrary_d.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)MathsLibrary\bin;$(SolutionDir)libraries\glfw_lib\lib-msvc110\;$(SolutionDir)libraries\raknet\lib;$(SolutionDir)libraries\glew\lib\release\win32;$(SolutionDir)libraries\irrKlang\lib\Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -82,8 +82,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;Raknet.lib;glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;glew32s.lib;MathsLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)libraries\glfw_lib\lib-msvc110\;$(SolutionDir)libraries\Raknet\lib;$(SolutionDir)libraries\glew\lib\release\win32;$(SolutionDir)MathsLibrary\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;Raknet.lib;glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;glew32s.lib;MathsLibrary.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)libraries\glfw_lib\lib-msvc110\;$(SolutionDir)libraries\Raknet\lib;$(SolutionDir)libraries\glew\lib\release\win32;$(SolutionDir)MathsLibrary\bin;$(SolutionDir)libraries\irrKlang\lib\Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -105,6 +105,8 @@
     <ClInclude Include="inc\Texture.h" />
     <ClInclude Include="inc\Tile.h" />
     <ClInclude Include="inc\vld.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Checker.cpp" />
@@ -130,6 +132,7 @@
     <Image Include="resources\images\blackKing.png" />
     <Image Include="resources\images\blackPiece.png" />
     <Image Include="resources\images\checker.png" />
+    <Image Include="resources\images\CheckersIcon.ico" />
     <Image Include="resources\images\whiteKing.png" />
     <Image Include="resources\images\whitePiece.png" />
   </ItemGroup>
@@ -138,6 +141,9 @@
     <None Include="resources\shaders\FlatVertexShader.glsl" />
     <None Include="resources\shaders\TexturedFragmentShader.glsl" />
     <None Include="resources\shaders\TexturedVertexShader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CheckersGame1.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

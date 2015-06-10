@@ -54,6 +54,7 @@ public:
 	bool m_bIsWhite;
 	bool m_bIsKing;
 	bool m_bIsSelected;
+	bool m_bIsCurrentTurn;
 
 	int m_iCurrentTile;
 	std::vector<int> m_vrTilesCanMoveTo;
@@ -67,7 +68,6 @@ public:
 
 
 private:
-
 
 
 	//------------ Functions --------------------
@@ -92,10 +92,11 @@ private:
 
 	// Texture is used for creating sprite
 	Texture		 *m_texPiece;
+	Texture		 *m_texSelector;
 
 	// Sprite is used for drawing
 	StaticSprite *m_sprPiece;
-
+	StaticSprite *m_sprSelector;
 
 	//-------------------------------------------
 
