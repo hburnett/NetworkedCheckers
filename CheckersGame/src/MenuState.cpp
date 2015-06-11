@@ -23,6 +23,8 @@ MenuState::MenuState(GameStateManager *pGameStateManager, Game *pGame) : IGameSt
 	m_bPlayerIsWhite		= m_pGame->m_bIsServer;
 	m_bOpponentClicked		= false;
 	m_bGameOver				= false;
+	m_bNoMovesWhite			= false; 
+	m_bNoMovesBlack			= false; 
 
 	m_gameCamera			= Camera();
 	m_v2cameraLastPosition  = m_gameCamera.cameraMatrix.GetTranslation();
@@ -132,7 +134,7 @@ void MenuState::Update(float dt)
 	// Receive packets
 	HandleNetworkMessages(m_pGame->m_pPeerInterface);
 
-	if (!m_bGameOver && m_vrWhitePieces.size() < 1)
+	if (!m_bGameOver && (m_vrWhitePieces.size() < 1 || m_bNoMovesWhite))
 	{
 		m_texWinner = new Texture("./Images/blackWins.png");
 		
@@ -143,7 +145,7 @@ void MenuState::Update(float dt)
 	}
 
 
-	if (!m_bGameOver && m_vrBlackPieces.size() < 1)
+	if (!m_bGameOver && (m_vrBlackPieces.size() < 1 || m_bNoMovesBlack))
 	{
 		m_texWinner = new Texture("./Images/whiteWins.png");
 
@@ -274,6 +276,7 @@ void MenuState::Update(float dt)
 		if ((m_bWhiteTurn && m_bPlayerIsWhite && !m_bOpponentClicked) || (m_bWhiteTurn && !m_bPlayerIsWhite && m_bOpponentClicked))
 		{
 			bool anyJumps = false;
+			m_bNoMovesWhite = true;
 			m_vrWhitePiecesThatCanJump.clear();
 
 			// Updates all white piece moves
@@ -281,6 +284,11 @@ void MenuState::Update(float dt)
 			{
 				m_vrWhitePieces[i].m_vrTileList = m_vrBoardTiles;
 				m_vrWhitePieces[i].UpdateMoves();
+
+				if (m_vrWhitePieces[i].m_vrTilesCanJumpTo.size() > 0 || m_vrWhitePieces[i].m_vrTilesCanMoveTo.size() > 0)
+				{
+					m_bNoMovesWhite = false;
+				}
 
 				// Checks if the piece can jump (kill another piece).
 				// If it can, it adds the piece number to an array.
@@ -601,6 +609,7 @@ void MenuState::Update(float dt)
 		if ((!m_bWhiteTurn && !m_bPlayerIsWhite && !m_bOpponentClicked) || (!m_bWhiteTurn && m_bPlayerIsWhite && m_bOpponentClicked))
 		{
 			bool anyJumps = false;
+			m_bNoMovesBlack = true;
 			m_vrBlackPiecesThatCanJump.clear();
 
 			// Updates all white piece moves
@@ -608,6 +617,13 @@ void MenuState::Update(float dt)
 			{
 				m_vrBlackPieces[i].m_vrTileList = m_vrBoardTiles;
 				m_vrBlackPieces[i].UpdateMoves();
+
+
+				if (m_vrBlackPieces[i].m_vrTilesCanJumpTo.size() > 0 || m_vrBlackPieces[i].m_vrTilesCanMoveTo.size() > 0)
+				{
+					m_bNoMovesBlack = false;
+				}
+
 
 				// Checks if the piece can jump (kill another piece).
 				// If it can, it adds the piece number to an array.

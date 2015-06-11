@@ -69,6 +69,8 @@ private:
 	bool m_bPlayerIsWhite;
 	bool m_bOpponentClicked;
 	bool m_bGameOver;
+	bool m_bNoMovesWhite;
+	bool m_bNoMovesBlack;
 
 	Texture			*m_pBackgroundTexture;
 	StaticSprite	*m_pBackgroundSprite;
